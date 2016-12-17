@@ -1,0 +1,28 @@
+{% extends 'articles/base.html' %}
+
+{% block body %}
+  <div class="wrapper">
+    <h1>{{ playlist.playlist_title }}</h1>
+    <h3>By {{ playlist.user.username }}</h3>
+
+    <!-- If statement for showing an error message -->
+    {% if error_message %}
+      <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+
+    <ul>
+      {% for article in playlist.article_set.all %}
+        <li><a href="{{ article.article_url }}" target="_blank">{{ article.article_title }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <div class="col-sm-12">
+      <br>
+      <a href="{% url 'articles:create_article' playlist.id %}">
+        <button type="button" class="btn btn-success">
+          <span class="glyphicon glyphicon-plus"></span>&nbsp; Add an Article
+        </button>
+      </a>
+    </div>
+  </div>
+{% endblock %}

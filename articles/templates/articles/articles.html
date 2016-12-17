@@ -1,0 +1,66 @@
+{% extends 'articles/base.html' %}
+{% block title %}All Articles{% endblock %}
+{% block articles_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid articles-container">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="nav nav-pills" style="margin-bottom: 10px;">
+                <li role="presentation" {% if filter_by == 'all' %}class="active"{% endif %}><a href="{% url 'articles:articles' 'all' %}">View All</a></li>
+                <li role="presentation" {% if filter_by == 'favourites' %}class="active"{% endif %}><a href="{% url 'articles:articles' 'favourites' %}">Favourites</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-sm-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Article Title</th>
+                                <!--<th>Audio File</th>-->
+                                <th>Playlist</th>
+                                <th>Favourite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in article_list %}
+                                <tr>
+                                    <td>{{ article.article_title }}</td>
+                                    <!--
+                                    <td>
+                                        <a target="_blank" href="{{ playlist.audio_file.url }}">
+                                            <button type="button" class="btn btn-success btn-xs">
+                                                <span class="glyphicon glyphicon-play"></span>&nbsp; Play
+                                            </button>
+                                        </a>
+                                    </td>
+                                    -->
+                                    <td>
+                                        <a href="{% url 'articles:detail' article.playlist.id %}">
+                                            {{ article.article_title }}
+                                        </a>
+                                        <a href="{% url 'articles:detail' article.playlist.id %}">{{ article.playlist.playlist_title }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'articles:favourite' article.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if article.is_favourite %}active{% endif %}"></span></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1 id="first-text">Maria is Radu's girlfriend.</h1>
+    <p id="python">Python is a general-purpose interpreted, interactive, object-oriented, and high-level programming language. It was created by Guido van Rossum during 1985- 1990. Like Perl, Python source code is also available under the GNU General Public License (GPL). This tutorial gives enough understanding on Python programming language.</p>
+  </body>
+  <script type="text/javascript">
+    var msg = new SpeechSynthesisUtterance('Hello World');
+    var mariaMsg = new SpeechSynthesisUtterance(document.getElementById('python').textContent)
+    window.speechSynthesis.speak(mariaMsg);
+  </script>
+</html>
