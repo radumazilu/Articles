@@ -1,7 +1,6 @@
 {% extends 'articles/base.html' %}
 
 {% block body %}
-  <div class="wrapper">
     <h1>{{ playlist.playlist_title }}</h1>
     <h3>By {{ playlist.user.username }}</h3>
 
@@ -16,13 +15,24 @@
       {% endfor %}
     </ul>
 
-    <div class="col-sm-12">
-      <br>
-      <a href="{% url 'articles:create_article' playlist.id %}">
-        <button type="button" class="btn btn-success">
-          <span class="glyphicon glyphicon-plus"></span>&nbsp; Add an Article
-        </button>
-      </a>
-    </div>
-  </div>
+    {% if user.username == playlist.user.username %}
+      <div class="col-sm-12">
+        <br>
+        <a href="{% url 'articles:create_article' playlist.id %}">
+          <button type="button" class="btn btn-success">
+            <span class="glyphicon glyphicon-plus"></span>&nbsp; Add an Article
+          </button>
+        </a>
+      </div>
+    {% else %}
+      <div class="col-sm-12">
+        <h2 class="lead">Do you like this playlist?</h2>
+        <br>
+        <a href="{% url 'articles:save_playlist' playlist.id %}">
+          <button type="button" class="btn btn-success">
+            <span class="glyphicon glyphicon-plus"></span>&nbsp; Save it
+          </button>
+        </a>
+      </div>
+    {% endif %}
 {% endblock %}

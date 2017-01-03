@@ -24,19 +24,19 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'articles:index' %}">Articles</a>
+          <a class="navbar-brand" href="{% url 'articles:discover' %}">Articles</a>
         </div>
 
         <!-- Items -->
         <div class="collapse navbar-collapse" id="topNavBar">
-          <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'articles:index' %}">
+          <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'articles:discover' %}">
               <div class="form-group">
                   <input type="text" class="form-control" name="q" value="{{ request.GET.q }}">
               </div>
               <button type="submit" class="btn btn-default">Search</button>
           </form>
           <ul class="nav navbar-nav navbar-right">
-              <li class="{% block playlists_active %}{% endblock %}" ><a href="{% url 'articles:index' %}">Playlists</a></li>
+              <li class="{% block playlists_active %}{% endblock %}" ><a href="{% url 'articles:index' %}">My Playlists</a></li>
               <li class="{% block articles_active %}{% endblock %}" ><a href="{% url 'articles:articles' 'all' %}">Articles</a></li>
               <li>
                   <a href="{% url 'articles:create_playlist' %}">
@@ -55,10 +55,10 @@
       </div>
     </nav>
 
-    <div class="wrapper">
-      {% block body %}
-      {% endblock %}
-    </div>
+<div class="wrapper">
+  {% block body %}
+  {% endblock %}
+</div>
 
 </body>
 </html>

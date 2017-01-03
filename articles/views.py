@@ -11,11 +11,39 @@ from django.db.models import Q
 from .models import Playlist, Article
 from .forms import UserForm, ArticleForm, PlaylistForm
 
+def search_database(request, query, nav_bar):
+    playlists = Playlist.objects.all()
+    article_results = Article.objects.all()
+    user_results = User.objects.all()
+    playlists = playlists.filter(
+        Q(playlist_title__icontains=query) |
+        Q(playlist_topic__icontains=query)
+    ).distinct()
+    article_results = article_results.filter(
+        Q(article_title__icontains=query)
+    ).distinct()
+    user_results = user_results.filter(
+        Q(username__icontains=query)
+    ).distinct()
+    return render(request, 'articles/index.html', {'playlists': playlists, 'articles': article_results, 'users': user_results, 'nav_bar': nav_bar})
+
 
 def index(request):
     if not request.user.is_authenticated():
-        return render(request, 'articles/login.html')
+        nav_bar = 'articles/base_visitor.html'
+        playlists = Playlist.objects.all()
+        article_results = Article.objects.all()
+        user_results = User.objects.all()
+
+        # If there is a query, return results based on the search
+        query = request.GET.get('q')
+
+        if query:
+            return search_database(request, query, nav_bar)
+        else:
+            return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
     else:
+        nav_bar = 'articles/base.html'
         playlists = Playlist.objects.filter(user=request.user)
         article_results = Article.objects.all()
         user_results = User.objects.all()
@@ -24,25 +52,49 @@ def index(request):
         query = request.GET.get('q')
 
         if query:
-            playlists = playlists.filter(
-                Q(playlist_title__icontains=query) |
-                Q(playlist_topic__icontains=query)
-            ).distinct()
-            article_results = article_results.filter(
-                Q(article_title__icontains=query)
-            ).distinct()
-            user_results = user_results.filter(
-                Q(username__icontains=query)
-            ).distinct()
-            return render(request, 'articles/index.html', {'playlists': playlists, 'articles': article_results, 'users': user_results})
-
+            return search_database(request, query, nav_bar)
         else:
-            return render(request, 'articles/index.html', {'playlists': playlists})
+            return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
+
+
+def discover(request):
+    if not request.user.is_authenticated():
+        nav_bar = 'articles/base_visitor.html'
+        playlists = Playlist.objects.all()
+        article_results = Article.objects.all()
+        user_results = User.objects.all()
+
+        # If there is a query, return results based on the search
+        query = request.GET.get('q')
+
+        if query:
+            return search_database(request, query, nav_bar)
+        else:
+            return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
+    else:
+        nav_bar = 'articles/base.html'
+        playlists = Playlist.objects.all()
+        article_results = Article.objects.all()
+        user_results = User.objects.all()
+
+        # If there is a query, return results based on the search
+        query = request.GET.get('q')
+
+        if query:
+            return search_database(request, query, nav_bar)
+        else:
+            return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
+
+
+def detail_not_authenticated(request, playlist_id):
+    playlist = get_object_or_404(Playlist, pk=playlist_id)
+    return render(request, 'articles/detail_not_authenticated.html', {'playlist': playlist})
 
 
 def detail(request, playlist_id):
     if not request.user.is_authenticated():
-        return render(request, 'articles/login.html')
+        playlist = get_object_or_404(Playlist, pk=playlist_id)
+        return render(request, 'articles/detail_not_authenticated.html', {'playlist': playlist})
 
     else:
         user = request.user
@@ -69,9 +121,10 @@ def register(request):
 
             # Login the user
             if user.is_active:
+                nav_bar = "article/base.html"
                 login(request, user)
                 playlists = Playlist.objects.filter(user=request.user)
-                return render(request, 'articles/index.html', {'playlists': playlists})
+                return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
 
     context = {
         'form': form,
@@ -80,6 +133,8 @@ def register(request):
 
 
 def login_user(request):
+    nav_bar = "articles/base.html"
+
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -89,7 +144,7 @@ def login_user(request):
             if user.is_active:
                 login(request, user)
                 playlists = Playlist.objects.filter(user=request.user)
-                return render(request, 'articles/index.html', {'playlists': playlists})
+                return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
             else:
                 return render(request, 'articles/login.html', {'error_message': 'Your account has been disabled'})
         else:
@@ -107,6 +162,7 @@ def logout_user(request):
 
 
 def favourite(request, article_id):
+    nav_bar = "articles/base.html"
     article = get_object_or_404(Article, pk=article_id)
     try:
         if article.is_favourite:
@@ -115,12 +171,13 @@ def favourite(request, article_id):
             article.is_favourite = True
         article.save()
     except (KeyError, Article.DoesNotExist):
-        return render(request, 'articles/articles.html', {'filter_by': 'favourite'})
+        return render(request, 'articles/articles.html', {'filter_by': 'favourite', 'nav_bar': nav_bar})
     else:
-        return render(request, 'articles/articles.html', {'filter_by': 'all'})
+        return render(request, 'articles/articles.html', {'filter_by': 'all', 'nav_bar': nav_bar})
 
 
 def favourite_playlist(request, playlist_id):
+    nav_bar = "articles/base.html"
     playlist = get_object_or_404(Playlist, pk=playlist_id)
     playlists = Playlist.objects.filter(user=request.user)
     try:
@@ -130,10 +187,9 @@ def favourite_playlist(request, playlist_id):
             playlist.is_favourite = True
         playlist.save()
     except (KeyError, Playlist.DoesNotExist):
-        return render(request, 'articles/index.html', {'playlists': playlists})
+        return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
     else:
-        return render(request, 'articles/index.html', {'playlists': playlists})
-
+        return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
 
 
 def articles(request, filter_by):
@@ -182,11 +238,20 @@ def create_playlist(request):
 
 
 def delete_playlist(request, playlist_id):
+    nav_bar = "articles/base.html"
     playlist = Playlist.objects.get(pk=playlist_id)
     playlist.delete()
     playlists = Playlist.objects.filter(user=request.user)
-    return render(request, 'articles/index.html', {'playlists': playlists})
+    return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
 
+
+def save_playlist(request, playlist_id):
+    nav_bar = "articles/base.html"
+    playlist = Playlist.objects.get(pk=playlist_id)
+    playlist.user = request.user
+    playlist.save()
+    playlists = Playlist.objects.filter(user=request.user)
+    return render(request, 'articles/index.html', {'playlists': playlists, 'nav_bar': nav_bar})
 
 
 def create_article(request, playlist_id):

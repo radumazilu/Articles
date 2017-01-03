@@ -3,12 +3,48 @@ body {
   font-family: 'Fira Sans'
 }
 
-.wrapper {
-  /* display: flex; */
-  height: 100vh;
-  justify-content: center;
+.playlists-container {
+  text-align: center;
+}
+
+.playlists-container li {
+  list-style: none;
+}
+
+.playlists-container ul {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.playlists-container a {
+  color: #777;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.playlist-wrapper {
+  height: 200px;
+  background: #d7d7d7;
+  border: 2px solid white;
+  display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  color: white;
+  font-size: 20px;
+  text-transform: none;
+  line-height: 2;
+  transition: all 0.3s ease-in;
+  padding: 4px;
+}
+
+.article-info {
+  height: 80%;
+  width: 100%;
+}
+
+.wrapper {
   text-align: center;
 }
 
@@ -28,23 +64,13 @@ body {
   text-transform: uppercase;
 }
 
-.playlist-wrapper {
-  height: 200px;
-  background: #d7d7d7;
-  border: 2px solid white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: white;
-  font-size: 20px;
-  text-transform: none;
-  line-height: 2;
-  transition: all 0.3s ease-in;
-  padding: 4px;
-}
-
 .active {
   color: #FFD366;
+}
+
+.lead {
+  margin-top: 2em;
+  margin-bottom: 0;
 }
 
 .playlist-wrapper:hover {

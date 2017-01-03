@@ -7,6 +7,9 @@ urlpatterns = [
     # /articles/
     url(r'^$', views.index, name='index'),
 
+    # /articles/dicover/
+    url(r'^discover/$', views.discover, name='discover'),
+
     # /articles/register/
     url(r'^register/$', views.register, name='register'),
 
@@ -19,6 +22,9 @@ urlpatterns = [
     # /articles/<playlist_id>/
     url(r'^(?P<playlist_id>[0-9]+)/$', views.detail, name='detail'),
 
+    # /articles/<playlist_id>/ - when not authenticated
+    url(r'^(?P<playlist_id>[0-9]+)/$', views.detail_not_authenticated, name='detail_not_authenticated'),
+
     # /articles/<article_id>/favourite
     url(r'^(?P<article_id>[0-9]+)/favourite/$', views.favourite, name='favourite'),
 
@@ -28,8 +34,11 @@ urlpatterns = [
     # /articles/playlist/add
     url(r'^create_playlist/$', views.create_playlist, name='create_playlist'),
 
-    # /articles/playlist/<playlist_id>/delete
+    # /articles/playlist/<playlist_id>/delete_playlist
     url(r'^(?P<playlist_id>[0-9]+)/delete_playlist/$', views.delete_playlist, name='delete_playlist'),
+
+    # /articles/playlist/<playlist_id>/save_playlist
+    url(r'^(?P<playlist_id>[0-9]+)/save_playlist/$', views.save_playlist, name='save_playlist'),
 
     # /articles/<playlist_id>/create_article
     url(r'^(?P<playlist_id>[0-9]+)/create_article/$', views.create_article, name='create_article'),

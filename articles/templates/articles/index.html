@@ -1,4 +1,4 @@
-{% extends 'articles/base.html' %}
+{% extends nav_bar %}
 {% block playlists_active %}active{% endblock %}
 
 {% block body %}
@@ -7,36 +7,51 @@
   <!-- Playlists -->
   <div class="row">
     <div class="col-sm-12">
-      <h2>{{ user.username }}'s Playlists</h2>
+      {% if not user.username or request.path == "/articles/discover/" %}
+        <h2>Discover Playlists</h2>
+      {% else %}
+        <h2>{{ user.username }}'s Playlists</h2>
+      {% endif %}
     </div>
     {% if playlists %}
+
         {% for playlist in playlists %}
 
           <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
 
             <div class="playlist-wrapper">
+              <div class="article-info">
+                <p>
+                  <!-- View Articles in Playlist -->
+                  {% if user.username %}
+                    <a href="{% url 'articles:detail' playlist.id %}">
+                      {{ playlist.playlist_title }}
+                    </a>
+                    in {{ playlist.playlist_topic }}
+                  {% else %}
+                    <a href="{% url 'articles:detail_not_authenticated' playlist.id %}">
+                      {{ playlist.playlist_title }}
+                    </a>
+                    in {{ playlist.playlist_topic }}
+                  {% endif %}
+                </p>
+              </div>
 
-              <p>
-                <!-- View Articles in Playlist -->
-                <a href="{% url 'articles:detail' playlist.id %}">
-                  {{ playlist.playlist_title }}
+              <!-- Delete Playlist (Only if logged in) -->
+              {% if user.username == playlist.user.username %}
+                <form action="{% url 'articles:delete_playlist' playlist.id %}" method="post" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="playlist_id" value="{{ playlist.id }}" />
+                  <button type="submit" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-trash"></span>
+                  </button>
+                </form>
+
+                <!-- Favourite Playlist (Only if logged in) -->
+                <a href="{% url 'articles:favourite_playlist' playlist.id %}" class="btn btn-sm btn-favourite" role="button">
+                  <span class="glyphicon glyphicon-star {% if playlist.is_favourite %} active {% endif %}"></span>
                 </a>
-                in {{ playlist.playlist_topic }}
-              </p>
-
-              <!-- Delete Playlist -->
-              <form action="{% url 'articles:delete_playlist' playlist.id %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <input type="hidden" name="playlist_id" value="{{ playlist.id }}" />
-                <button type="submit" class="btn btn-default btn-sm">
-                  <span class="glyphicon glyphicon-trash"></span>
-                </button>
-              </form>
-
-              <!-- Favourite Playlist -->
-              <a href="{% url 'articles:favourite_playlist' playlist.id %}" class="btn btn-sm btn-favourite" role="button">
-                <span class="glyphicon glyphicon-star {% if playlist.is_favourite %} active {% endif %}"></span>
-              </a>
+              {% endif %}
 
             </div>
 
@@ -54,6 +69,7 @@
         </a>
       </div>
     {% endif %}
+
   </div>
 
   <!-- If user searches and there articles, display them -->
@@ -121,29 +137,12 @@
                               <thead>
                                   <tr>
                                       <th>User Name</th>
-                                      <!--  <th>Article URL</th> -->
-                                      <!--  <th>Audio File</th>  -->
-                                      <!-- <th>Playist</th> -->
-                                      <!-- <th>Favorite</th> -->
                                   </tr>
                               </thead>
                               <tbody>
                                   {% for user in users %}
                                       <tr>
                                           <td>{{ user.username }}</td>
-                                          <!-- <td>{{ article.article_url }}</td> -->
-                                          <!-- Audio file for each article
-                                          <td>
-                                              <a target="_blank" href="{{ article.audio_file.url }}">
-                                                  <button type="button" class="btn btn-success btn-xs">
-                                                      <span class="glyphicon glyphicon-play"></span>&nbsp; Play
-                                                  </button>
-                                              </a>
-                                          </td>
-                                          -->
-                                          <!--
-
-                                          -->
                                       </tr>
                                   {% endfor %}
                               </tbody>
